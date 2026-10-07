@@ -1,0 +1,33 @@
+stages:
+  - test
+  - build
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_TLS_CERTDIR: ""
+
+cache:
+  paths:
+    - .m2/repository/
+
+test:
+  stage: test
+  image: eclipse-temurin:25-jdk
+  services:
+    - name: docker:29-dind
+      alias: docker
+  script:
+    - chmod +x mvnw
+    - ./mvnw clean test
+
+build:
+  stage: build
+  image: eclipse-temurin:25-jdk
+  script:
+    - chmod +x mvnw
+    - ./mvnw clean package -DskipTests
+  artifacts:
+    paths:
+      - target/*.jar
+    expire_in: 1 day
