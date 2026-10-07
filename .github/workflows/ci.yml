@@ -47,3 +47,14 @@ jobs:
         with:
           name: devops-fundamentals
           path: target/*.jar
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t devops-fundamentals:latest .
